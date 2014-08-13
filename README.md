@@ -20,17 +20,18 @@ Or install it yourself as:
 
 Initialize pool:
 
-    Fibre.initialize!(size: 10)
+    Fibre.pool_size = 10
 
 ## Usage
 
 ```ruby
-pool = Emmy.Pool.new(10)
-pool.checkout do
+Fibre.pool_size = 10
+Fibre.pool.checkout do
   puts "runned in fiber"
 end
 # some fiber raised exception
-pool.on :error do |e|
+using EventObject
+Fibre.pool.on :error do |e|
   puts e.to_s
   exit
 end
@@ -38,7 +39,7 @@ end
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/fibre/fork )
+1. Fork it ( https://github.com/chelovekov/fibre/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
