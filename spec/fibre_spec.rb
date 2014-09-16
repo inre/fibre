@@ -1,4 +1,5 @@
 require "spec_helper"
+
 describe Fibre do
   using EventObject
 
@@ -18,11 +19,20 @@ describe Fibre do
     Fibre.pool.checkout(&probe)
   end
 
-  it "rescue error in fiber" do
+  it "should rescue error in fiber" do
     expect(probe).to receive(:call)
     Fibre.pool.on(:error, &probe)
     Fibre.pool.checkout do
       raise
+    end
+  end
+
+  it "should scope" do
+    expect(probe).to receive(:call)
+    Fibre.pool.checkout do
+      Fiber.scope do
+        probe.call
+      end
     end
   end
 end

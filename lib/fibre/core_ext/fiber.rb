@@ -26,11 +26,11 @@ class Fiber
   class <<self
 
     def scope(*a, &b)
-      Fiber::Scope.scope(*a, &b)
+      Fibre::Scope.scope(*a, &b)
     end
 
     def sync(*a, &b)
-      Fiber::Scope.scope? ? Fiber::Scope.sync(*a, &b) : sync_it(*a, &b)
+      Fibre::Scope.scope? ? Fibre::Scope.sync(*a, &b) : sync_it(*a, &b)
     end
 
     # raise exception if we catch exception

@@ -1,4 +1,4 @@
-class Fiber
+module Fibre
   class Mock
     attr_reader :scope
     attr_reader :result

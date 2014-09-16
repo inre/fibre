@@ -1,4 +1,4 @@
-class Fiber
+module Fibre
   class Scope
     attr_accessor :mocks
     attr_accessor :fiber
@@ -35,7 +35,6 @@ class Fiber
     def check
       fiber.resume if @mocks.all?(&:completed?)
     end
-
 
     module Iterator
       def sync
