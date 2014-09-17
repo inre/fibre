@@ -1,6 +1,7 @@
 require "event_object"
 require "fibre/version"
 require "fibre/core_ext/fiber"
+require "fibre/core_ext/synchrony"
 
 module Fibre
   autoload :FiberPool,    'fibre/fiber_pool'

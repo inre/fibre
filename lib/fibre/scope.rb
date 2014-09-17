@@ -35,14 +35,5 @@ module Fibre
     def check
       fiber.resume if @mocks.all?(&:completed?)
     end
-
-    module Iterator
-      def sync
-        res = Fiber.scope do
-          collect(&:sync)
-        end
-        res.collect(&:result)
-      end
-    end
   end
 end

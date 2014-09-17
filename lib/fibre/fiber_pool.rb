@@ -68,8 +68,8 @@ module Fibre
           before!(spec)
           spec[:block].call# *Fiber.current.args
           after!(spec)
-        rescue Exception => e
-          # don't raise fiber exceptions
+        rescue StandardError => e
+          raise e if error.empty?
           error!(e)
         end
 

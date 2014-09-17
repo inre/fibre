@@ -3,6 +3,8 @@ require "spec_helper"
 describe Fibre do
   using EventObject
 
+  before { Fibre.pool = nil }
+
   it "should create default pool with default size" do
     expect(Fibre.pool.size).to be(20)
   end
@@ -21,7 +23,10 @@ describe Fibre do
 
   it "should rescue error in fiber" do
     expect(probe).to receive(:call)
-    Fibre.pool.on(:error, &probe)
+    Fibre.pool.on(:error) do |error|
+      probe.call
+    end
+
     Fibre.pool.checkout do
       raise
     end
@@ -34,5 +39,25 @@ describe Fibre do
         probe.call
       end
     end
+  end
+
+  it "should raise uncatched exceptions" do
+    expect {
+      Fibre.pool.checkout do
+        raise
+      end
+    }.to raise_error
+  end
+
+  it "should catch exception" do
+    Fibre.pool.on :error do |error|
+      # catch exception here
+    end
+
+    expect {
+      Fibre.pool.checkout do
+        raise
+      end
+    }.to_not raise_error
   end
 end
