@@ -71,6 +71,8 @@ module Fibre
         rescue StandardError => e
           raise e if error.empty?
           error!(e)
+        rescue Exception => e
+          raise e if error.empty?
         end
 
         unless @queue.empty?
