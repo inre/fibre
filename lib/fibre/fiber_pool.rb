@@ -68,11 +68,15 @@ module Fibre
           before!(spec)
           spec[:block].call# *Fiber.current.args
           after!(spec)
+        # catch ArgumentError, IOError, EOFError, IndexError, LocalJumpError, NameError, NoMethodError
+        # RangeError, FloatDomainError, RegexpError, RuntimeError, SecurityError, SystemCallError
+        # SystemStackError, ThreadError, TypeError, ZeroDivisionError
         rescue StandardError => e
           raise e if error.empty?
           error!(e)
+        # catch NoMemoryError, ScriptError, SignalException, SystemExit, fatal etc
         rescue Exception => e
-          raise e if error.empty?
+          raise e
         end
 
         unless @queue.empty?
