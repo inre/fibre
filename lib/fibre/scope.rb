@@ -20,7 +20,7 @@ module Fibre
 
       def sync
         scope = Fiber.current[:scope]
-        mock = Fiber::Mock.new(scope)
+        mock = Fibre::Mock.new(scope)
         scope.mocks << mock
         yield(mock) if block_given?
         mock
