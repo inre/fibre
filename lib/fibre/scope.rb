@@ -7,11 +7,12 @@ module Fibre
 
       def scope
         raise "nested scopes" if Fiber.current[:scope]
-        Fiber.current[:scope] = self.new(Fiber.current)
-        res = yield
+        scope = self.new(Fiber.current)
+        Fiber.current[:scope] = scope
+        yield
         Fiber.current[:scope] = nil
         Fiber.yield!
-        res
+        scope.mocks
       end
 
       def scope?

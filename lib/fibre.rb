@@ -12,6 +12,8 @@ module Fibre
     autoload :FiberPool,  'fibre/rack/fiber_pool'
   end
 
+  class LeaveError < StandardError; end
+
   # Configuration module
 
   extend self

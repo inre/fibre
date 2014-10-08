@@ -1,7 +1,8 @@
 module Fibre
   class Mock
-    attr_reader :scope
-    attr_reader :result
+    attr_reader   :scope
+    attr_reader   :result
+    attr_accessor :path
 
     def initialize(scope)
       @scope = scope

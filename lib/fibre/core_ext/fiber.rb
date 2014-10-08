@@ -1,10 +1,10 @@
 require 'fiber'
 
-#
 #   Fiber.sync do |fiber|
 #     fiber.resume response
 #     fiber.leave StandardError, "Something"
 #   end
+
 class Fiber
 
   def attributes
@@ -40,18 +40,14 @@ class Fiber
       end
     end
 
-    #
-    # Fiber.sync do |fiber|
-    #   fiber.resume # ...
-    # end
-    #
+
     def sync_it
       yield(Fiber.current) if block_given?
       Fiber.yield!
     end
   end
 
-  def leave(exception, message=nil)
+  def leave(exception=Fibre::LeaveError, message=nil)
     resume exception.new(message)
   end
 end
