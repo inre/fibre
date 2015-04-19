@@ -1,4 +1,4 @@
-Copyright (c) 2014 che
+Copyright (c) 2014 Inre Storm
 
 MIT License
 

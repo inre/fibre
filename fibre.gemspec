@@ -6,8 +6,8 @@ require 'fibre/version'
 Gem::Specification.new do |spec|
   spec.name          = "fibre"
   spec.version       = Fibre::VERSION
-  spec.authors       = ["che"]
-  spec.email         = ["max@kupibilet.ru"]
+  spec.authors       = ["inre"]
+  spec.email         = ["inre.storm@gmail.com"]
   spec.summary       = %q{Fibre - fiber pool, mock and scoping fibres}
   #spec.description   = %q{TODO: Write a longer description. Optional.}
   spec.homepage      = ""

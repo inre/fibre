@@ -29,10 +29,4 @@ Fibre.pool_size = 10
 Fibre.pool.checkout do
   puts "runned in fiber"
 end
-# some fiber raised exception
-using EventObject
-Fibre.pool.on :error do |e|
-  puts e.to_s
-  exit
-end
 ```
