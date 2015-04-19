@@ -7,17 +7,12 @@
 #  pool.checkout do
 #    puts "runned in fiber"
 #  end
-#
-#  # some fiber raised exception
-#  pool.on :error do |e|
-#    puts e.to_s
-#  end
 
 module Fibre
   using EventObject
 
   class FiberPool
-    events :error, :before, :after
+    events :before, :after
 
     # Initialize fibers pool
     def initialize(size)
@@ -37,8 +32,9 @@ module Fibre
       end
 
       @pool.shift.tap do |fiber|
-        @reserved[fiber.object_id] = fiber
-        fiber.resume(spec)
+        @reserved[fiber.object_id] = spec
+        err = fiber.resume(spec)
+        raise FiberError.new(err) if err.is_a?(Exception)
       end
 
       self
@@ -64,19 +60,19 @@ module Fibre
       loop do
         raise "wrong spec in fiber block" unless spec.is_a?(Hash)
 
+        result = nil
         begin
           before!(spec)
           spec[:block].call# *Fiber.current.args
           after!(spec)
-        # catch ArgumentError, IOError, EOFError, IndexError, LocalJumpError, NameError, NoMethodError
-        # RangeError, FloatDomainError, RegexpError, RuntimeError, SecurityError, SystemCallError
-        # SystemStackError, ThreadError, TypeError, ZeroDivisionError
+
+          # catch ArgumentError, IOError, EOFError, IndexError, LocalJumpError, NameError, NoMethodError
+          # RangeError, FloatDomainError, RegexpError, RuntimeError, SecurityError, SystemCallError
+          # SystemStackError, ThreadError, TypeError, ZeroDivisionError
         rescue StandardError => e
-          raise e if error.empty?
-          error!(e)
-        # catch NoMemoryError, ScriptError, SignalException, SystemExit, fatal etc
-        rescue Exception => e
-          raise e
+          result = e
+          # catch NoMemoryError, ScriptError, SignalException, SystemExit, fatal etc
+          #rescue Exception
         end
 
         unless @queue.empty?
@@ -84,15 +80,15 @@ module Fibre
           next
         end
 
-        spec = checkin
+        spec = checkin(result)
       end
     end
 
     # Check-in fiber to pool
-    def checkin
+    def checkin(result=nil)
       @reserved.delete ::Fiber.current.object_id
       @pool.unshift ::Fiber.current
-      ::Fiber.yield
+      ::Fiber.yield result
     end
   end
 end

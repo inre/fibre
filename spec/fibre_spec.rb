@@ -21,7 +21,7 @@ describe Fibre do
     expect(probe).to receive(:call)
     Fibre.pool.checkout(&probe)
   end
-
+=begin
   it "should rescue error in fiber" do
     expect(probe).to receive(:call)
     Fibre.pool.on(:error) do |error|
@@ -32,6 +32,7 @@ describe Fibre do
       raise
     end
   end
+=end
 
   it "should scope" do
     expect(probe).to receive(:call)
@@ -42,14 +43,18 @@ describe Fibre do
     end
   end
 
+  def raise_method
+    raise "test exception"
+  end
+
   it "should raise uncatched exceptions" do
     expect {
       Fibre.pool.checkout do
-        raise
+        raise_method
       end
     }.to raise_error
   end
-
+=begin
   it "should catch exception" do
     Fibre.pool.on :error do |error|
       # catch exception here
@@ -61,7 +66,7 @@ describe Fibre do
       end
     }.to_not raise_error
   end
-
+=end
   describe "in fiber specs" do
 
     around do |examples|
@@ -84,6 +89,20 @@ describe Fibre do
       end
     end
 
+    class FibreTestOperationWithException
+      def initialize(number)
+        @number = number
+      end
+
+      def sync
+        Fiber.sync do |f|
+          Fibre.pool.checkout do
+            raise "test"
+          end
+        end
+      end
+    end
+
     it "should Fiber.sync works well" do
       result = Fiber.sync do |fiber|
         EM.next_tick do
@@ -93,14 +112,19 @@ describe Fibre do
       expect(result).to be :success
     end
 
-    it "should method leave raise exception" do
+    it "should raise exception in fiber" do
       expect {
-        Fiber.sync do |fiber|
-          EM.next_tick do
-            fiber.leave
-          end
+        Fibre.pool.checkout do
+          raise "test"
         end
-      }.to raise_error Fibre::LeaveError
+      }.to raise_error FiberError
+    end
+
+    it "should sync with exception" do
+      expect {
+        op = FibreTestOperationWithException.new(4)
+        op.sync
+      }.to raise_error FiberError
     end
 
     it "should sync array (scoping test)" do
@@ -132,7 +156,7 @@ describe Fibre do
           op45: [op4, { op5: op5 }]
         }
       }.sync!
-      
+
       expect(res).to include(
         op3: 5,
         ops: match_array([3,13]),

@@ -30,24 +30,23 @@ class Fiber
     end
 
     def sync(*a, &b)
-      Fibre::Scope.scope? ? Fibre::Scope.sync(*a, &b) : sync_it(*a, &b)
+      Fibre::Scope.scope? ? Fibre::Scope.sync(*a, &b) : wait(*a, &b)
     end
 
     # raise exception if we catch exception
     def yield!
       Fiber.yield.tap do |y|
-        raise y if y.is_a?(Exception)
+        raise FiberError.new(y) if y.is_a?(Exception)
       end
     end
 
-
-    def sync_it
+    def wait
       yield(Fiber.current) if block_given?
       Fiber.yield!
     end
   end
 
-  def leave(exception=Fibre::LeaveError, message=nil)
-    resume exception.new(message)
+  def leave(exception, message=nil) # deprecated
+    raise exception.new(message)
   end
 end

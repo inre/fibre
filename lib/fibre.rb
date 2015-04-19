@@ -2,6 +2,7 @@ require "event_object"
 require "fibre/version"
 require "fibre/core_ext/fiber"
 require "fibre/core_ext/synchrony"
+require "fibre/fiber_error"
 
 module Fibre
   autoload :FiberPool,    'fibre/fiber_pool'
@@ -11,8 +12,6 @@ module Fibre
   module Rack
     autoload :FiberPool,  'fibre/rack/fiber_pool'
   end
-
-  class LeaveError < StandardError; end
 
   # Configuration module
 
