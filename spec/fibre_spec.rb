@@ -21,7 +21,7 @@ describe Fibre do
     expect(probe).to receive(:call)
     Fibre.pool.checkout(&probe)
   end
-=begin
+
   it "should rescue error in fiber" do
     expect(probe).to receive(:call)
     Fibre.pool.on(:error) do |error|
@@ -32,7 +32,7 @@ describe Fibre do
       raise
     end
   end
-=end
+
 
   it "should scope" do
     expect(probe).to receive(:call)
@@ -54,7 +54,7 @@ describe Fibre do
       end
     }.to raise_error
   end
-=begin
+
   it "should catch exception" do
     Fibre.pool.on :error do |error|
       # catch exception here
@@ -66,7 +66,7 @@ describe Fibre do
       end
     }.to_not raise_error
   end
-=end
+
   describe "in fiber specs" do
 
     around do |examples|

@@ -12,7 +12,7 @@ module Fibre
   using EventObject
 
   class FiberPool
-    events :before, :after
+    events :error, :before, :after
 
     # Initialize fibers pool
     def initialize(size)
@@ -33,8 +33,7 @@ module Fibre
 
       @pool.shift.tap do |fiber|
         @reserved[fiber.object_id] = spec
-        err = fiber.resume(spec)
-        raise Fibre::FiberError.new(err) if err.is_a?(Exception)
+        fiber.resume(spec)
       end
 
       self
@@ -60,7 +59,6 @@ module Fibre
       loop do
         raise "wrong spec in fiber block" unless spec.is_a?(Hash)
 
-        result = nil
         begin
           before!(spec)
           spec[:block].call# *Fiber.current.args
@@ -70,7 +68,11 @@ module Fibre
           # RangeError, FloatDomainError, RegexpError, RuntimeError, SecurityError, SystemCallError
           # SystemStackError, ThreadError, TypeError, ZeroDivisionError
         rescue StandardError => e
-          result = e
+          if error.empty?
+            raise Fibre::FiberError.new(e)
+          else
+            error!(e)
+          end
           # catch NoMemoryError, ScriptError, SignalException, SystemExit, fatal etc
           #rescue Exception
         end
@@ -80,7 +82,7 @@ module Fibre
           next
         end
 
-        spec = checkin(result)
+        spec = checkin
       end
     end
 
@@ -88,7 +90,7 @@ module Fibre
     def checkin(result=nil)
       @reserved.delete ::Fiber.current.object_id
       @pool.unshift ::Fiber.current
-      ::Fiber.yield result
+      ::Fiber.yield
     end
   end
 end

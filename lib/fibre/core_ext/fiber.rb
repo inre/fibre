@@ -46,7 +46,7 @@ class Fiber
     end
   end
 
-  def leave(exception, message=nil) # deprecated
-    raise exception.new(message)
+  def leave(exception, message=nil)
+    resume exception.is_a?(Class) ? exception.new(message) : exception
   end
 end
