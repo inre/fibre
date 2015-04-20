@@ -36,7 +36,7 @@ class Fiber
     # raise exception if we catch exception
     def yield!
       Fiber.yield.tap do |y|
-        raise FiberError.new(y) if y.is_a?(Exception)
+        raise Fibre::FiberError.new(y) if y.is_a?(Exception)
       end
     end
 

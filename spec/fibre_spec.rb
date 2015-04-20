@@ -117,14 +117,14 @@ describe Fibre do
         Fibre.pool.checkout do
           raise "test"
         end
-      }.to raise_error FiberError
+      }.to raise_error Fibre::FiberError
     end
 
     it "should sync with exception" do
       expect {
         op = FibreTestOperationWithException.new(4)
         op.sync
-      }.to raise_error FiberError
+      }.to raise_error Fibre::FiberError
     end
 
     it "should sync array (scoping test)" do

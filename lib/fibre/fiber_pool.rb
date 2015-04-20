@@ -34,7 +34,7 @@ module Fibre
       @pool.shift.tap do |fiber|
         @reserved[fiber.object_id] = spec
         err = fiber.resume(spec)
-        raise FiberError.new(err) if err.is_a?(Exception)
+        raise Fibre::FiberError.new(err) if err.is_a?(Exception)
       end
 
       self
