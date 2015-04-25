@@ -10,8 +10,8 @@ module Fibre
     def set_backtrace backtrace
       bt = backtrace
       if parent
-        bt = parent.backtrace
-        bt << "<<< parent fiber: #{parent.class.name}: #{parent}"
+        bt = parent.backtrace || []
+        bt << "<<< parent fiber: #{parent.class.to_s}: #{parent}"
         bt.concat backtrace
       end
       super bt
