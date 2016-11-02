@@ -8,7 +8,7 @@ describe Fibre do
   let(:probe) { lambda {} }
 
   it "should create default pool with default size" do
-    expect(Fibre.pool.size).to be(20)
+    expect(Fibre.pool.size).to be(50)
     expect(Fibre.max_pool_queue_size).to be(1000)
   end
 
