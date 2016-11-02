@@ -4,11 +4,12 @@ describe Fibre do
   using EventObject
   using Fibre::Synchrony
 
-  before { Fibre.pool = nil }
+  before { Fibre.reset }
   let(:probe) { lambda {} }
 
   it "should create default pool with default size" do
     expect(Fibre.pool.size).to be(20)
+    expect(Fibre.max_pool_queue_size).to be(1000)
   end
 
   it "should have right root fiber" do
@@ -52,7 +53,7 @@ describe Fibre do
       Fibre.pool.checkout do
         raise_method
       end
-    }.to raise_error
+  }.to raise_error(Fibre::FiberError)
   end
 
   it "should catch exception" do

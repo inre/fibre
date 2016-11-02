@@ -1,9 +1,12 @@
-require 'fiber'
-
+# Extend the Fiber class
+#
+# Outline,
+#
 #   Fiber.sync do |fiber|
 #     fiber.resume response
 #     fiber.leave StandardError, "Something"
 #   end
+require 'fiber'
 
 class Fiber
 

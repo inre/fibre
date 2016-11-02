@@ -1,3 +1,11 @@
+# Extend some classes to support synchronous operations
+#
+# Outline,
+#
+# use Fibre::Synchrony
+# [req1, req2].sync
+# { op1: req1, op2: req2 }.sync
+
 module Fibre::Synchrony
 
   refine Array do

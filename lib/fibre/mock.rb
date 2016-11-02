@@ -19,7 +19,7 @@ module Fibre
     end
 
     def leave(e, *a)
-      resume e.new(*a)
+      resume e.is_a?(Class) ? e.new(*a) : e
     end
   end
 end

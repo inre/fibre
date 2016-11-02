@@ -6,7 +6,7 @@ module Fibre
     class <<self
 
       def scope
-        raise "nested scopes" if Fiber.current[:scope]
+        raise 'nested scopes' if Fiber.current[:scope]
         scope = self.new(Fiber.current)
         Fiber.current[:scope] = scope
         yield

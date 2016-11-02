@@ -1,4 +1,3 @@
-#
 # Fiber pool
 #
 # Example,
@@ -21,12 +20,12 @@ module Fibre
       @queue = []
     end
 
-    # Check-out fiber from pool
+    # Borrow fiber from the pool and call the block inside
     def checkout(&b)
       spec = { block: b, parent: ::Fiber.current }
 
       if @pool.empty?
-        raise "fiber queue overflow" if @queue.size > MAX_POOL_QUEUE_SIZE
+        raise "The fiber queue has been overflowed" if @queue.size > Fibre.max_pool_queue_size
         @queue.push spec
         return
       end
@@ -39,7 +38,7 @@ module Fibre
       self
     end
 
-    # Free pool size
+    # The size of pool
     def size
       @pool.size
     end
@@ -54,7 +53,7 @@ module Fibre
 
     private
 
-    # entrypoint for all fibers
+    # There is entrypoint running fibers
     def fiber_entry(spec)
       loop do
         raise "wrong spec in fiber block" unless spec.is_a?(Hash)
@@ -86,7 +85,7 @@ module Fibre
       end
     end
 
-    # Check-in fiber to pool
+    # Return the fiber into the pool
     def checkin(result=nil)
       @reserved.delete ::Fiber.current.object_id
       @pool.unshift ::Fiber.current
