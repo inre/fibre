@@ -13,6 +13,12 @@ describe Fibre do
     expect(Fibre.pool.pool_queue_size).to be(1000)
   end
 
+  it "initializes global pool" do
+    Fibre.init_pool(pool_size: 10, pool_queue_size: 900)
+    expect(Fibre.pool.pool_size).to be(10)
+    expect(Fibre.pool.pool_queue_size).to be(900)
+  end
+
   it "has the root fiber" do
     expect(Fibre.root).to equal(Fiber.current)
     expect(Fiber.current.root?).to be true

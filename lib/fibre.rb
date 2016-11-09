@@ -23,8 +23,8 @@ module Fibre
   DEFAULT_POOL_QUEUE_SIZE = 1000
   FIBER_POOL_THREADED = '__fiber_pool'
 
-  def make_pool(pool_size: DEFAULT_POOL_SIZE, pool_queue_size: DEFAULT_POOL_QUEUE_SIZE)
-    FiberPool.new(pool_size: pool_size, pool_queue_size: pool_queue_size)
+  def init_pool(*a)
+    Thread.current[FIBER_POOL_THREADED] = make_pool(*a)
   end
 
   # Auto-initialize at first call and each thread has own fiber pool
@@ -35,5 +35,9 @@ module Fibre
   def reset
     Thread.current[FIBER_POOL_THREADED] = nil
     pool
+  end
+
+  def make_pool(pool_size: DEFAULT_POOL_SIZE, pool_queue_size: DEFAULT_POOL_QUEUE_SIZE)
+    FiberPool.new(pool_size: pool_size, pool_queue_size: pool_queue_size)
   end
 end
