@@ -13,11 +13,18 @@ module Fibre
   class FiberPool
     events :error, :before, :after
 
-    # Initialize fibers pool
-    def initialize(size)
-      @pool = size.times.collect { ::Fiber.new(&self.method(:fiber_entry)) }
+    attr_reader :pool_size
+    attr_reader :pool_queue_size
+    attr_reader :reserved
+    attr_reader :queue
+
+    # Initialize fiber's pool
+    def initialize(pool_size: DEFAULT_POOL_SIZE, pool_queue_size: DEFAULT_POOL_QUEUE_SIZE)
+      @pool_size = pool_size
+      @pool_queue_size = pool_queue_size
       @reserved = {}
       @queue = []
+      @pool = @pool_size.times.collect { ::Fiber.new(&self.method(:fiber_entry)) }
     end
 
     # Borrow fiber from the pool and call the block inside
@@ -25,7 +32,7 @@ module Fibre
       spec = { block: b, parent: ::Fiber.current }
 
       if @pool.empty?
-        raise "The fiber queue has been overflowed" if @queue.size > Fibre.max_pool_queue_size
+        raise "The fiber queue has been overflowed" if @queue.size > @pool_queue_size
         @queue.push spec
         return
       end
@@ -36,19 +43,6 @@ module Fibre
       end
 
       self
-    end
-
-    # The size of pool
-    def size
-      @pool.size
-    end
-
-    def reserved
-      @reserved
-    end
-
-    def queue
-      @queue
     end
 
     private

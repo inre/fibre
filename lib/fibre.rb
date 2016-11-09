@@ -19,22 +19,21 @@ module Fibre
   attr_accessor :root
   self.root = Fiber.current
 
-  # The pool size must be defined before the pool is called
-  attr_accessor :pool_size
-  self.pool_size = 50
+  DEFAULT_POOL_SIZE = 50
+  DEFAULT_POOL_QUEUE_SIZE = 1000
+  FIBER_POOL_THREADED = '__fiber_pool'
 
-  # Can be changed at any time
-  attr_accessor :max_pool_queue_size
-  self.max_pool_queue_size = 1000
+  def make_pool(pool_size: DEFAULT_POOL_SIZE, pool_queue_size: DEFAULT_POOL_QUEUE_SIZE)
+    FiberPool.new(pool_size: pool_size, pool_queue_size: pool_queue_size)
+  end
 
   # Auto-initialize at first call and each thread has own fiber pool
-  attr_writer :pool
   def pool
-    Thread.current[:__fiber_pool] ||= FiberPool.new(pool_size)
+    Thread.current[FIBER_POOL_THREADED] ||= make_pool
   end
 
   def reset
-    Thread.current[:__fiber_pool] = nil
+    Thread.current[FIBER_POOL_THREADED] = nil
     pool
   end
 end

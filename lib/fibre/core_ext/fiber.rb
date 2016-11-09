@@ -2,7 +2,7 @@
 #
 # Outline,
 #
-#   Fiber.sync do |fiber|
+#   Fiber.await do |fiber|
 #     fiber.resume response
 #     fiber.leave StandardError, "Something"
 #   end
@@ -26,14 +26,18 @@ class Fiber
     attributes[key] = value
   end
 
+  def leave(exception, message=nil)
+    resume exception.is_a?(Class) ? exception.new(message) : exception
+  end
+
   class <<self
 
     def scope(*a, &b)
       Fibre::Scope.scope(*a, &b)
     end
 
-    def sync(*a, &b)
-      Fibre::Scope.scope? ? Fibre::Scope.sync(*a, &b) : wait(*a, &b)
+    def await(*a, &b)
+      Fibre::Scope.in_scope? ? Fibre::Scope.await(*a, &b) : await_only(*a, &b)
     end
 
     # raise exception if we catch exception
@@ -43,13 +47,9 @@ class Fiber
       end
     end
 
-    def wait
+    def await_only
       yield(Fiber.current) if block_given?
       Fiber.yield!
     end
-  end
-
-  def leave(exception, message=nil)
-    resume exception.is_a?(Class) ? exception.new(message) : exception
   end
 end

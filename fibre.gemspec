@@ -21,10 +21,10 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version     = '>= 2.1.0'
   spec.required_rubygems_version = '>= 2.3.0'
 
+  spec.add_dependency 'event_object', '~> 1'
+
   spec.add_development_dependency 'eventmachine', '~> 1.2'
   spec.add_development_dependency 'bundler', '~> 1.12'
-  spec.add_development_dependency 'rake', '~> 10.0'
-  spec.add_development_dependency 'rspec', '~> 3.0'
-
-  spec.add_dependency 'event_object', '~> 1'
+  spec.add_development_dependency 'rake', '~> 10'
+  spec.add_development_dependency 'rspec', '~> 3'
 end

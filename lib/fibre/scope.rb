@@ -15,11 +15,11 @@ module Fibre
         scope.mocks
       end
 
-      def scope?
+      def in_scope?
         !!Fiber.current[:scope]
       end
 
-      def sync
+      def await
         scope = Fiber.current[:scope]
         mock = Fibre::Mock.new(scope)
         scope.mocks << mock
